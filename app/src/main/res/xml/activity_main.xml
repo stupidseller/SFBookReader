@@ -3,7 +3,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <!-- 顶部工具栏 -->
+    <!-- 顶部工具栏 - 修正关闭标签 -->
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
@@ -30,7 +30,7 @@
             android:layout_height="wrap_content"
             android:src="@drawable/ic_menu"
             android:contentDescription="菜单"/>
-    </Toolbar>
+    </androidx.appcompat.widget.Toolbar> <!-- 修正关闭标签 -->
 
     <!-- 书籍列表 -->
     <androidx.recyclerview.widget.RecyclerView

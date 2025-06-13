@@ -1,3 +1,6 @@
+import androidx.activity.viewModels
+import androidx.lifecycle.ViewModelProvider
+
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private val viewModel: BookShelfViewModel by viewModels()
