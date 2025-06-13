@@ -1,21 +1,36 @@
-import androidx.activity.viewModels
+package com.example.sfbookreader
+
+// 添加以下导入
+import android.content.Intent
+import android.net.Uri
+import android.os.Bundle
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.GridLayoutManager
+import com.example.sfbookreader.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
-    private val viewModel: BookShelfViewModel by viewModels()
+    private lateinit var viewModel: BookShelfViewModel // 改为lateinit var
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // 初始化ViewModel
+        viewModel = ViewModelProvider(
+            this,
+            BookShelfViewModel.Factory(application)
+        ).get(BookShelfViewModel::class.java)
+
         // 初始化RecyclerView
         setupRecyclerView()
 
         // 监听ViewModel数据变化
         viewModel.books.observe(this) { books ->
-            (binding.rvBooks.adapter as BookAdapter).submitList(books)
+            (binding.rvBooks.adapter as? BookAdapter)?.submitList(books)
         }
 
         // 右上角按钮事件
@@ -25,16 +40,47 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupRecyclerView() {
-        binding.rvBooks.layoutManager = GridLayoutManager(this, 3) // 默认网格布局
+        binding.rvBooks.layoutManager = GridLayoutManager(this, 3)
         binding.rvBooks.adapter = BookAdapter { book -> onBookClicked(book) }
+    }
+
+    // 实现缺失的方法
+    private fun openSearch() {
+        // 实现搜索功能
+        Toast.makeText(this, "搜索功能待实现", Toast.LENGTH_SHORT).show()
+    }
+
+    // 实现缺失的方法
+    private fun showGroupMenu() {
+        // 实现菜单功能
+        Toast.makeText(this, "分组菜单待实现", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun onBookClicked(book: Book) {
+        // 打开书籍
+        Toast.makeText(this, "打开书籍: ${book.title}", Toast.LENGTH_SHORT).show()
     }
 
     private fun importBook() {
         val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+            addCategory(Intent.CATEGORY_OPENABLE)
             type = "*/*"
-            putExtra(Intent.EXTRA_MIME_TYPES, arrayOf("text/plain", "application/pdf", "application/epub"))
+            putExtra(Intent.EXTRA_MIME_TYPES, arrayOf(
+                "text/plain",
+                "application/pdf",
+                "application/epub+zip"
+            ))
         }
         startActivityForResult(intent, REQUEST_IMPORT_BOOK)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == REQUEST_IMPORT_BOOK && resultCode == RESULT_OK) {
+            data?.data?.let { uri ->
+                viewModel.importBook(uri)
+            }
+        }
     }
 
     // 双击退出实现
@@ -46,5 +92,9 @@ class MainActivity : AppCompatActivity() {
             Toast.makeText(this, "再按一次退出", Toast.LENGTH_SHORT).show()
             backPressedTime = System.currentTimeMillis()
         }
+    }
+
+    companion object {
+        const val REQUEST_IMPORT_BOOK = 1001
     }
 }
