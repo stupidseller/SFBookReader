@@ -12,11 +12,8 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-        maven { url = uri("https://jitpack.io") }
-        // 可选：添加阿里云镜像加速
-        maven { url = uri("https://maven.aliyun.com/repository/public") }
     }
 }
 
-rootProject.name = "SFBookReader"
+rootProject.name = "YourProjectName"
 include(":app")

@@ -1,5 +1,6 @@
 package com.example.sfbookreader
 
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,41 +10,43 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.yourapp.R
 
-class BookAdapter(private val onItemClick: (Book) -> Unit) :
-    ListAdapter<Book, BookAdapter.BookViewHolder>(BookDiffCallback()) {
+class BookAdapter(
+    private val books: List<Book>,
+    private val onItemClick: (Book) -> Unit,
+    private val onMenuClick: (Book, View) -> Unit
+) : RecyclerView.Adapter<BookAdapter.ViewHolder>() {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BookViewHolder {
-        val inflater = LayoutInflater.from(parent.context)
-        // 创建视图 - 实际项目中需要创建item_book.xml布局文件
-        val view = inflater.inflate(android.R.layout.simple_list_item_1, parent, false)
-        return BookViewHolder(view)
+    inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        val cover: ImageView = view.findViewById(R.id.ivCover)
+        val title: TextView = view.findViewById(R.id.tvTitle)
+        val menuButton: ImageView = view.findViewById(R.id.btnMenu)
     }
 
-    override fun onBindViewHolder(holder: BookViewHolder, position: Int) {
-        val book = getItem(position)
-        holder.bind(book)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        val view = LayoutInflater.from(parent.context)
+            .inflate(R.layout.item_book, parent, false)
+        return ViewHolder(view)
+    }
+
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        val book = books[position]
+
+        // 设置封面
+        if (book.coverPath != null) {
+            Glide.with(holder.itemView.context)
+                .load(File(book.coverPath))
+                .into(holder.cover)
+        } else {
+            holder.cover.setImageResource(R.drawable.default_cover)
+            holder.cover.setBackgroundColor(Color.LTGRAY)
+        }
+
+        holder.title.text = book.title
         holder.itemView.setOnClickListener { onItemClick(book) }
+        holder.menuButton.setOnClickListener { onMenuClick(book, it) }
     }
 
-    inner class BookViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val titleView: TextView = itemView.findViewById(android.R.id.text1)
-        // 实际项目中会有封面视图：private val coverView: ImageView = ...
-
-        fun bind(book: Book) {
-            titleView.text = book.title
-            // 实际项目中加载封面：
-            // Glide.with(itemView.context).load(book.coverPath).into(coverView)
-        }
-    }
-
-    class BookDiffCallback : DiffUtil.ItemCallback<Book>() {
-        override fun areItemsTheSame(oldItem: Book, newItem: Book): Boolean {
-            return oldItem.id == newItem.id
-        }
-
-        override fun areContentsTheSame(oldItem: Book, newItem: Book): Boolean {
-            return oldItem == newItem
-        }
-    }
+    override fun getItemCount() = books.size
 }

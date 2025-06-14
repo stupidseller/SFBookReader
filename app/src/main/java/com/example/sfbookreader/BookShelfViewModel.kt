@@ -9,23 +9,23 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.io.File
 
 class BookShelfViewModel(application: Application) : AndroidViewModel(application) {
-    private val repository: BookRepository = BookRepository(application)
-    val books: LiveData<List<Book>> = repository.getAllBooks()
+    private val repository = BookRepository(application)
+    val books = repository.allBooks
 
-    fun importBook(uri: Uri) {
-        viewModelScope.launch(Dispatchers.IO) {
-            val book = FileUtils.parseBookFromUri(getApplication(), uri)
-            repository.insertBook(book)
+    fun deleteBook(book: Book) {
+        viewModelScope.launch {
+            repository.delete(book)
+            // 删除实际文件
+            File(book.filePath).delete()
         }
     }
 
-    // ViewModel Factory
-    class Factory(private val application: Application) : ViewModelProvider.Factory {
-        @Suppress("UNCHECKED_CAST")
-        override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return BookShelfViewModel(application) as T
+    fun pinBook(bookId: Int) {
+        viewModelScope.launch {
+            repository.pinBook(bookId, true)
         }
     }
 }

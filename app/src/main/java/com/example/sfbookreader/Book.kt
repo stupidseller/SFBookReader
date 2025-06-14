@@ -6,9 +6,11 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "books")
 data class Book(
-    @PrimaryKey val id: String,
+    @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val title: String,
-    val coverPath: String?, // 封面路径
-    val filePath: String,   // 文件路径
-    val addedDate: Long = System.currentTimeMillis() // 添加时间戳
+    val filePath: String,
+    val coverPath: String? = null,
+    val group: String = "默认分组",
+    val isPinned: Boolean = false,
+    val lastReadPosition: Int = 0
 )

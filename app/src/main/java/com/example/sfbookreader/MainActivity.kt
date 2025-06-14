@@ -1,62 +1,54 @@
-package com.example.sfbookreader
-
-// 添加这些导入
+import android.app.AlertDialog
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.view.View
+import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
-import com.example.sfbookreader.databinding.ActivityMainBinding // 确保视图绑定已启用
+import com.example.sfbookreader.Book
+import com.example.sfbookreader.BookAdapter
+import com.example.sfbookreader.BookShelfViewModel
+import com.example.sfbookreader.FileUtils
+import com.example.yourapp.R
+import java.io.File
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityMainBinding
     private lateinit var viewModel: BookShelfViewModel
+    private lateinit var binding: ActivityMainBinding
+    private var backPressedOnce = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        // 初始化视图绑定
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // 初始化ViewModel
-        viewModel = ViewModelProvider(
-            this,
-            BookShelfViewModel.Factory(application)
-        ).get(BookShelfViewModel::class.java)
+        viewModel = ViewModelProvider(this)[BookShelfViewModel::class.java]
 
-        // 初始化RecyclerView
         setupRecyclerView()
-
-        // 监听ViewModel数据变化
-        viewModel.books.observe(this) { books ->
-            (binding.rvBooks.adapter as? BookAdapter)?.submitList(books)
-        }
-
-        // 右上角按钮事件
-        binding.btnSearch.setOnClickListener { openSearch() }
-        binding.btnImport.setOnClickListener { importBook() }
-        binding.btnMenu.setOnClickListener { showGroupMenu() }
+        setupButtons()
+        observeBooks()
     }
 
     private fun setupRecyclerView() {
-        binding.rvBooks.layoutManager = GridLayoutManager(this, 3)
-        binding.rvBooks.adapter = BookAdapter { book -> onBookClicked(book) }
+        binding.recyclerView.layoutManager = GridLayoutManager(this, 3)
     }
 
-    // 实现缺失的方法
-    private fun openSearch() {
-        Toast.makeText(this, "搜索功能待实现", Toast.LENGTH_SHORT).show()
+    private fun observeBooks() {
+        viewModel.books.observe(this) { books ->
+            binding.recyclerView.adapter = BookAdapter(books,
+                { book -> openBook(book) },
+                { book, view -> showBookMenu(book, view) }
+            )
+        }
     }
 
-    private fun showGroupMenu() {
-        Toast.makeText(this, "分组菜单待实现", Toast.LENGTH_SHORT).show()
-    }
-
-    private fun onBookClicked(book: Book) {
-        Toast.makeText(this, "打开书籍: ${book.title}", Toast.LENGTH_SHORT).show()
+    private fun setupButtons() {
+        binding.btnImport.setOnClickListener { importBook() }
+        binding.btnMenu.setOnClickListener { showMainMenu(it) }
     }
 
     private fun importBook() {
@@ -69,30 +61,64 @@ class MainActivity : AppCompatActivity() {
                 "application/epub+zip"
             ))
         }
-        startActivityForResult(intent, REQUEST_IMPORT_BOOK)
+        startActivityForResult(intent, IMPORT_REQUEST_CODE)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REQUEST_IMPORT_BOOK && resultCode == RESULT_OK) {
+        if (requestCode == IMPORT_REQUEST_CODE && resultCode == RESULT_OK) {
             data?.data?.let { uri ->
-                viewModel.importBook(uri)
+                val filePath = FileUtils.importBook(this, uri)
+                filePath?.let {
+                    val book = Book(
+                        title = File(it).nameWithoutExtension,
+                        filePath = it
+                    )
+                    viewModel.insert(book)
+                }
             }
         }
     }
 
-    // 双击退出实现
-    private var backPressedTime = 0L
-    override fun onBackPressed() {
-        if (backPressedTime + 2000 > System.currentTimeMillis()) {
-            super.onBackPressed()
-        } else {
-            Toast.makeText(this, "再按一次退出", Toast.LENGTH_SHORT).show()
-            backPressedTime = System.currentTimeMillis()
+    private fun showBookMenu(book: Book, anchor: View) {
+        val popup = PopupMenu(this, anchor)
+        popup.menuInflater.inflate(R.menu.book_menu, popup.menu)
+
+        popup.setOnMenuItemClickListener { item ->
+            when (item.itemId) {
+                R.id.menu_pin -> viewModel.pinBook(book.id)
+                R.id.menu_delete -> showDeleteConfirmation(book)
+                R.id.menu_details -> showBookDetails(book)
+            }
+            true
         }
+        popup.show()
+    }
+
+    private fun showDeleteConfirmation(book: Book) {
+        AlertDialog.Builder(this)
+            .setTitle("删除书籍")
+            .setMessage("书籍文件和本地阅读进度都会被删除，你确认此操作吗？")
+            .setPositiveButton("确定") { _, _ -> viewModel.deleteBook(book) }
+            .setNegativeButton("取消", null)
+            .show()
+    }
+
+    override fun onBackPressed() {
+        if (backPressedOnce) {
+            super.onBackPressed()
+            return
+        }
+
+        this.backPressedOnce = true
+        Toast.makeText(this, "再按一次退出程序", Toast.LENGTH_SHORT).show()
+
+        Handler(Looper.getMainLooper()).postDelayed({
+            backPressedOnce = false
+        }, 2000)
     }
 
     companion object {
-        const val REQUEST_IMPORT_BOOK = 1001
+        const val IMPORT_REQUEST_CODE = 1001
     }
 }
