@@ -1,22 +1,23 @@
 plugins {
-    alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
-//    alias(libs.plugins.kotlin.compose)
+    id("com.android.application")
+    id("org.jetbrains.kotlin.android")
+    // 正确应用kapt的方式
     kotlin("kapt")
 }
 
 android {
     namespace = "com.example.sfbookreader"
-    compileSdk = 35
+    compileSdk = 34  // 使用稳定版本34替代35
 
     defaultConfig {
         applicationId = "com.example.sfbookreader"
         minSdk = 24
-        targetSdk = 35
+        targetSdk = 34  // 使用稳定版本34替代35
         versionCode = 1
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        vectorDrawables.useSupportLibrary = true
     }
 
     buildTypes {
@@ -36,54 +37,26 @@ android {
         jvmTarget = "11"
     }
     buildFeatures {
-        compose = true
+        viewBinding = true
     }
 }
 
-// 添加仓库配置
-repositories {
-    mavenCentral()
-    maven { url = uri("https://jitpack.io") }  // 添加JitPack仓库
-}
-
-dependencies {
-
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.lifecycle.runtime.ktx)
-    implementation(libs.androidx.activity.compose)
-    implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.androidx.ui)
-    implementation(libs.androidx.ui.graphics)
-    implementation(libs.androidx.ui.tooling.preview)
-    implementation(libs.androidx.material3)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
-    androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(libs.androidx.ui.test.junit4)
-    debugImplementation(libs.androidx.ui.tooling)
-    debugImplementation(libs.androidx.ui.test.manifest)
-
-}
-
-// 正确的Kotlin DSL格式依赖配置
 dependencies {
     // 基础组件
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
-    implementation("androidx.activity:activity-ktx:1.8.0")  // 添加Activity KTX
+    implementation("androidx.activity:activity-ktx:1.8.0")
 
     // ViewModel 和 LiveData
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.2")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
 
     // RecyclerView
     implementation("androidx.recyclerview:recyclerview:1.3.2")
 
     // 图片加载
     implementation("com.github.bumptech.glide:glide:4.16.0")
-    kapt("com.github.bumptech.glide:compiler:4.16.0")  // 使用kapt替代annotationProcessor
+    kapt("com.github.bumptech.glide:compiler:4.16.0")
 
     // 文件处理
     implementation("androidx.documentfile:documentfile:1.0.1")
@@ -95,15 +68,14 @@ dependencies {
 
     // 协程
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
 
-    // PDF 解析 - 使用稳定版本
-    implementation("com.github.barteksc:android-pdf-viewer:3.2.0")  // 移除beta后缀
+    // PDF 解析
+    implementation("com.github.barteksc:android-pdf-viewer:3.2.0-beta.1")
 
-    // EPUB 解析 - 使用正确的库
-    implementation("nl.siegmann.epublib:epublib-core:3.1")  // 替换fbreader
+    // EPUB 解析
+    implementation("nl.siegmann.epublib:epublib-core:3.1")
 
-    // 测试依赖
+    // 测试
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")

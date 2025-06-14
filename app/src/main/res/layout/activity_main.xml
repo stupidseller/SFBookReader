@@ -14,7 +14,7 @@
             android:id="@+id/btnSearch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_sealrch"
+            android:src="@drawable/ic_search"
             android:contentDescription="搜索"/>
 
         <ImageButton

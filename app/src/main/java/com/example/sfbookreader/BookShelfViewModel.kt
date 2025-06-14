@@ -1,6 +1,5 @@
 package com.example.sfbookreader
 
-// 添加以下导入
 import android.app.Application
 import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
@@ -22,7 +21,7 @@ class BookShelfViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
-    // 添加ViewModel Factory
+    // ViewModel Factory
     class Factory(private val application: Application) : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {

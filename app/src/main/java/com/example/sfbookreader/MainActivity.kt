@@ -1,6 +1,6 @@
 package com.example.sfbookreader
 
-// 添加以下导入
+// 添加这些导入
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -8,14 +8,16 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
-import com.example.sfbookreader.databinding.ActivityMainBinding
+import com.example.sfbookreader.databinding.ActivityMainBinding // 确保视图绑定已启用
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
-    private lateinit var viewModel: BookShelfViewModel // 改为lateinit var
+    private lateinit var viewModel: BookShelfViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // 初始化视图绑定
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -46,18 +48,14 @@ class MainActivity : AppCompatActivity() {
 
     // 实现缺失的方法
     private fun openSearch() {
-        // 实现搜索功能
         Toast.makeText(this, "搜索功能待实现", Toast.LENGTH_SHORT).show()
     }
 
-    // 实现缺失的方法
     private fun showGroupMenu() {
-        // 实现菜单功能
         Toast.makeText(this, "分组菜单待实现", Toast.LENGTH_SHORT).show()
     }
 
     private fun onBookClicked(book: Book) {
-        // 打开书籍
         Toast.makeText(this, "打开书籍: ${book.title}", Toast.LENGTH_SHORT).show()
     }
 
