@@ -20,10 +20,14 @@ interface BookDao {
     @Query("SELECT * FROM books ORDER BY isPinned DESC, title ASC")
     fun getAllBooks(): LiveData<List<Book>>
 
-    @Query("SELECT * FROM books WHERE group = :groupName")
+    // 修复：使用反引号转义 SQL 关键字 "group"
+    @Query("SELECT * FROM books WHERE `group` = :groupName")
     fun getBooksByGroup(groupName: String): LiveData<List<Book>>
 
     @Update
     suspend fun update(book: Book)
-    abstract fun getBookById(bookId: Int): Any
+
+    // 修复：添加正确的 getBookById 方法
+    @Query("SELECT * FROM books WHERE id = :bookId")
+    suspend fun getBookById(bookId: Int): Book?
 }

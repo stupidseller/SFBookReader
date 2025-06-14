@@ -12,7 +12,7 @@ import com.bumptech.glide.Glide
 import com.example.yourapp.R
 import java.io.File
 
-class BookAdapter(private val onItemClick: (Book) -> Unit) :
+class BookAdapter(private val onItemClick: (Book) -> Unit,private val onItemLongClick: (Book, View) -> Unit? = null) :
     ListAdapter<Book, BookAdapter.BookViewHolder>(BookDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BookViewHolder {

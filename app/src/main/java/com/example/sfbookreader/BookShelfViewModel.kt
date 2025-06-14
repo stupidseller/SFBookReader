@@ -28,4 +28,11 @@ class BookShelfViewModel(application: Application) : AndroidViewModel(applicatio
             repository.pinBook(bookId, true)
         }
     }
+
+    // 添加 insert 方法
+    fun insert(book: Book) {
+        viewModelScope.launch {
+            repository.insert(book)
+        }
+    }
 }

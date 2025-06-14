@@ -3,7 +3,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <!-- 顶部工具栏 - 修正关闭标签 -->
+    <!-- 顶部工具栏 -->
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
@@ -11,17 +11,10 @@
         android:background="?attr/colorPrimary">
 
         <ImageButton
-            android:id="@+id/btnSearch"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:contentDescription="搜索"
-            android:src="@drawable/ic_search" />
-
-        <ImageButton
             android:id="@+id/btnImport"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:contentDescription="导入书籍"
+            android:contentDescription="导入"
             android:src="@drawable/ic_add" />
 
         <ImageButton
@@ -30,12 +23,13 @@
             android:layout_height="wrap_content"
             android:contentDescription="菜单"
             android:src="@drawable/ic_menu" />
-    </androidx.appcompat.widget.Toolbar> <!-- 修正关闭标签 -->
+    </androidx.appcompat.widget.Toolbar>
 
     <!-- 书籍列表 -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvBooks"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="8dp" />
+        android:padding="8dp"
+        android:contentDescription="书籍列表" />
 </LinearLayout>

@@ -14,7 +14,6 @@ import com.example.sfbookreader.BookAdapter
 import com.example.sfbookreader.BookShelfViewModel
 import com.example.sfbookreader.FileUtils
 import com.example.yourapp.R
-import java.io.File
 
 class MainActivity : AppCompatActivity() {
     private lateinit var viewModel: BookShelfViewModel
