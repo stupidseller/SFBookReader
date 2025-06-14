@@ -22,7 +22,8 @@ class BookRepository(context: Context) {
     suspend fun pinBook(bookId: Int, pin: Boolean) = withContext(Dispatchers.IO) {
         val book = bookDao.getBookById(bookId)
         book?.let {
-            bookDao.update(it.copy(isPinned = pin))
+            val updatedBook = it.copy(isPinned = pin)
+            bookDao.update(updatedBook)
         }
     }
 }

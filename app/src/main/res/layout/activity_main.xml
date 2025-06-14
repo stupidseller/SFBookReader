@@ -14,22 +14,22 @@
             android:id="@+id/btnSearch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_search"
-            android:contentDescription="搜索"/>
+            android:contentDescription="搜索"
+            android:src="@drawable/ic_search" />
 
         <ImageButton
             android:id="@+id/btnImport"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_add"
-            android:contentDescription="导入书籍"/>
+            android:contentDescription="导入书籍"
+            android:src="@drawable/ic_add" />
 
         <ImageButton
             android:id="@+id/btnMenu"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_menu"
-            android:contentDescription="菜单"/>
+            android:contentDescription="菜单"
+            android:src="@drawable/ic_menu" />
     </androidx.appcompat.widget.Toolbar> <!-- 修正关闭标签 -->
 
     <!-- 书籍列表 -->
@@ -37,5 +37,5 @@
         android:id="@+id/rvBooks"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="8dp"/>
+        android:padding="8dp" />
 </LinearLayout>

@@ -13,4 +13,6 @@ data class Book(
     val group: String = "默认分组",
     val isPinned: Boolean = false,
     val lastReadPosition: Int = 0
-)
+){
+
+}
